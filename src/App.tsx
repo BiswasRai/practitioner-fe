@@ -1,11 +1,10 @@
 import "./App.less";
 import "./App.css";
-import Dashboard from "./components/Dashboard/Dashboard";
-import PractitionerList from "./components/PractitionerList/PractitionerList";
-import PractitionerDetail from "./components/PractitionerDetail/PractitionerDetail";
+
+import PractitionerDetailForm from "./components/PractitionerDetailForm";
 
 function App() {
-  return <PractitionerDetail />;
+  return <PractitionerDetailForm />;
 }
 
 export default App;
