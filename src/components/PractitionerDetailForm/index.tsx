@@ -182,6 +182,7 @@ const handlePractitionerForm = () => {
 const PractitionerDetailForm = () => {
   return (
     <Dashboard>
+      <p>Practitioner</p>
       <Card>{handlePractitionerForm()}</Card>
     </Dashboard>
   );

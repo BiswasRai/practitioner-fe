@@ -1,8 +1,17 @@
-import React from "react";
 import { Table, Typography, Avatar, Button, Col, Row } from "antd";
 import { EyeOutlined, PlusOutlined } from "@ant-design/icons";
 
 import Dashboard from "../Dashboard";
+import { Link, useNavigate } from "react-router-dom";
+
+type Practitioner = {
+  id: number;
+  dob: Date;
+  contactNo: number;
+  fullName: string;
+  permanentAddress: string;
+  photo: string;
+};
 
 const practitionerData = [
   {
@@ -16,8 +25,13 @@ const practitionerData = [
     dataIndex: "photo",
     key: "photo",
     width: "100px",
-    render: (value: string) => {
-      return <Avatar src={value} style={{ backgroundColor: "#fde3cf" }} />;
+    render: (value: Practitioner) => {
+      return (
+        <Avatar
+          src={value?.photo ?? ""}
+          style={{ backgroundColor: "#fde3cf" }}
+        />
+      );
     },
   },
   {
@@ -43,11 +57,13 @@ const practitionerData = [
   {
     title: "Details",
     key: "Details",
-    render: () => {
+    render: (value: Practitioner) => {
       return (
-        <Button type="primary" icon={<EyeOutlined />}>
-          View Details
-        </Button>
+        <Link to={`../${value.id}`}>
+          <Button type="primary" icon={<EyeOutlined />}>
+            View Details
+          </Button>
+        </Link>
       );
     },
   },
@@ -56,6 +72,8 @@ const practitionerData = [
 const { Title } = Typography;
 
 const PractitionerList = () => {
+  const navigate = useNavigate();
+
   return (
     <Dashboard>
       <Row
@@ -71,6 +89,7 @@ const PractitionerList = () => {
             type="primary"
             style={{ width: "100%" }}
             icon={<PlusOutlined />}
+            onClick={() => navigate("/practitioner/new")}
           >
             Add Practitioner
           </Button>

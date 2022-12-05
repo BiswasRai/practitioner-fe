@@ -6,6 +6,7 @@ import {
   TeamOutlined,
 } from "@ant-design/icons";
 import { Layout, Menu } from "antd";
+import { NavLink } from "react-router-dom";
 
 const { Header, Sider, Content } = Layout;
 
@@ -20,23 +21,15 @@ const Dashboard = (props: DashboardProps) => {
     <Layout>
       <Sider trigger={null} collapsible collapsed={collapsed}>
         <div className="logo" />
-        <Menu
-          theme="dark"
-          mode="inline"
-          defaultSelectedKeys={["1"]}
-          items={[
-            {
-              key: "1",
-              icon: <UserOutlined />,
-              label: "Practitioner",
-            },
-            {
-              key: "2",
-              icon: <TeamOutlined />,
-              label: "User",
-            },
-          ]}
-        />
+        <Menu theme="dark" mode="inline" defaultSelectedKeys={["1"]}>
+          <Menu.Item key={1} icon={<UserOutlined />}>
+            <NavLink to="/practitioner">Practitioner</NavLink>
+          </Menu.Item>
+
+          <Menu.Item key={2} icon={<TeamOutlined />}>
+            <NavLink to="/User">User</NavLink>
+          </Menu.Item>
+        </Menu>
       </Sider>
       <Layout className="site-layout">
         <Header className="bg-white" style={{ padding: "0 0 0 24px" }}>

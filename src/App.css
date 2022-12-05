@@ -1,15 +1,15 @@
 body {
   margin: 0;
   height: 100%;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New";
 }
 
 html {
@@ -21,15 +21,15 @@ html {
   height: 100%;
 }
 
-.ant-layout{
+.ant-layout {
   height: 100%;
 }
 
-.ant-menu{
+.ant-menu {
   padding-top: 100px;
 }
 
-.bg-white{
+.bg-white {
   background: #fff !important;
 }
 
@@ -43,16 +43,49 @@ html {
   color: #fff;
 }
 
-.practitioner-avatar{
+.practitioner-avatar {
   background-color: red;
 }
 
-.text-color{
+.text-color {
   color: #999 !important;
   font-size: 14px !important;
 }
 
-.practitioner-detail__text{
+.practitioner-detail__text {
   margin: 10px 10px 0 0;
 }
 
+.login-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: #efefef;
+}
+
+.signup-page__form {
+  height: 500px;
+  padding: 1rem;
+  background: #fff;
+  width: 400px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.form-input {
+  width: 100%;
+}
+
+.login-page__form {
+  padding: 1rem;
+  background: #fff;
+  width: 400px;
+  height: 400px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}

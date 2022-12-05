@@ -2,21 +2,21 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 import { Button, Form, Input, notification, Row, Typography } from "antd";
-import { LockOutlined, MailOutlined } from "@ant-design/icons";
+import { LockOutlined, MailOutlined, UserOutlined } from "@ant-design/icons";
 
 import { loginUser } from "../../services/login.service";
 import {
   ApiErrorResponse,
   ApiResponse,
-  Userlogin,
+  Signup,
 } from "../../constants/globalType";
 
 const { Title } = Typography;
 
-const Login: React.FC = () => {
+const SignUp: React.FC = () => {
   const [api, contextHolder] = notification.useNotification();
 
-  const onFinish = async (values: Userlogin) => {
+  const onFinish = async (values: Signup) => {
     let res: ApiResponse;
 
     try {
@@ -42,12 +42,32 @@ const Login: React.FC = () => {
       {contextHolder}
       <Form
         name="normal_login"
-        className="login-page__form"
+        className="signup-page__form"
         onFinish={onFinish}
       >
         <Title level={2} style={{ marginBottom: "50px" }}>
-          Login
+          Sign Up
         </Title>
+        <Form.Item
+          className="form-input"
+          name="firstName"
+          rules={[{ required: true, message: "Please input your First Name!" }]}
+        >
+          <Input
+            prefix={<UserOutlined className="site-form-item-icon" />}
+            placeholder="First Name"
+          />
+        </Form.Item>
+        <Form.Item
+          className="form-input"
+          name="lastName"
+          rules={[{ required: true, message: "Please input your Last Name!" }]}
+        >
+          <Input
+            prefix={<UserOutlined className="site-form-item-icon" />}
+            placeholder="Last Name"
+          />
+        </Form.Item>
         <Form.Item
           className="form-input"
           name="email"
@@ -75,12 +95,12 @@ const Login: React.FC = () => {
           style={{ width: "100%", marginTop: "50px" }}
           className="login-form-button"
         >
-          Log in
+          Sign Up
         </Button>
-        Or <Link to="/signup">Sign Up</Link>
+        Or <Link to="/login">Log in</Link>
       </Form>
     </Row>
   );
 };
 
-export default Login;
+export default SignUp;
