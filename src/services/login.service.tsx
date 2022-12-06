@@ -11,7 +11,7 @@ export const loginUser = (payload: Userlogin) => {
 };
 
 export const signupUser = (payload: Signup) => {
-  const url = endpoints.LOGIN;
+  const url = endpoints.SIGNUP;
 
   return http.post(url, payload);
 };

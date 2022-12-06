@@ -36,7 +36,6 @@ const configWithAccessToken = (
 http.interceptors.request.use(
   (requestConfig: AxiosRequestConfig): AxiosRequestConfig | any => {
     const accessToken = getAccessToken();
-    console.log(process.env.REACT_APP_API_BASE_URL);
 
     // if (accessToken) {
     return configWithAccessToken(requestConfig, accessToken);

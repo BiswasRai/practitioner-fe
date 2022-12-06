@@ -11,6 +11,7 @@ export type ApiErrorResponse = {
 
 type ApiData = {
   info: string;
+  [key: string]: string;
 };
 
 export type ApiResponse = {
@@ -24,4 +25,13 @@ export type Signup = {
   password: string;
   firstName: string;
   lastName: string;
+};
+
+export type Practitioner = {
+  id: number;
+  dob: Date;
+  contactNo: number;
+  fullName: string;
+  permanentAddress: string;
+  photo: string;
 };

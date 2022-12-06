@@ -1,29 +1,31 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import { Button, Form, Input, notification, Row, Typography } from "antd";
 import { LockOutlined, MailOutlined, UserOutlined } from "@ant-design/icons";
 
-import { loginUser } from "../../services/login.service";
+import { signupUser } from "../../services/login.service";
 import {
   ApiErrorResponse,
   ApiResponse,
   Signup,
 } from "../../constants/globalType";
+import { setAccessToken, setRefreshToken } from "../../utils/localStorage";
 
 const { Title } = Typography;
 
 const SignUp: React.FC = () => {
   const [api, contextHolder] = notification.useNotification();
+  const navigate = useNavigate();
 
   const onFinish = async (values: Signup) => {
     let res: ApiResponse;
 
     try {
-      res = await loginUser(values);
+      res = await signupUser(values);
     } catch (error) {
       const err = error as ApiErrorResponse;
-      console.log(err, error);
+
       api["error"]({
         message: err.message || "Something went wrong",
         description: `${err.data.info}`,
@@ -32,9 +34,17 @@ const SignUp: React.FC = () => {
       return;
     }
 
+    setAccessToken(res.data.accessToken);
+    setRefreshToken(res.data.refreshToken);
+    handleRedirectUser();
+
     api["success"]({
       message: res.message || "",
     });
+  };
+
+  const handleRedirectUser = () => {
+    navigate("/practitioner");
   };
 
   return (

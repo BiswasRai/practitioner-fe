@@ -1,8 +1,12 @@
+import React from "react";
+import { Link, useNavigate } from "react-router-dom";
+
+import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks";
+import { fetchPractitioners } from "../../reducer/practitioner.slice";
 import { Table, Typography, Avatar, Button, Col, Row } from "antd";
 import { EyeOutlined, PlusOutlined } from "@ant-design/icons";
 
 import Dashboard from "../Dashboard";
-import { Link, useNavigate } from "react-router-dom";
 
 type Practitioner = {
   id: number;
@@ -13,7 +17,7 @@ type Practitioner = {
   photo: string;
 };
 
-const practitionerData = [
+const practitionerColumn = [
   {
     title: "Practitioner ID",
     dataIndex: "id",
@@ -72,7 +76,15 @@ const practitionerData = [
 const { Title } = Typography;
 
 const PractitionerList = () => {
+  const practitioner = useAppSelector(
+    (state) => state.practitioner.practitioners
+  );
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+
+  React.useEffect(() => {
+    dispatch(fetchPractitioners());
+  }, []);
 
   return (
     <Dashboard>
@@ -96,18 +108,7 @@ const PractitionerList = () => {
         </Col>
       </Row>
 
-      <Table
-        columns={practitionerData}
-        dataSource={[
-          {
-            id: "1",
-            fullName: "Biswas Rai",
-            permanentAddress: "Nepal",
-            contactNo: 981000,
-            dob: "2022-10-01",
-          },
-        ]}
-      />
+      <Table columns={practitionerColumn} dataSource={practitioner} />
     </Dashboard>
   );
 };
