@@ -28,10 +28,17 @@ export type Signup = {
 };
 
 export type Practitioner = {
-  id: number;
+  id?: number;
   dob: Date;
-  contactNo: number;
+  contact: number;
   fullName: string;
   permanentAddress: string;
+  temporaryAddress: string;
+  isSpecialist: boolean;
+  email: string;
+  dateOfBirth: string;
+  startTime: string;
+  endTime: string;
+  workingDays: number;
   photo: string;
 };

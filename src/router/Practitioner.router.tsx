@@ -8,7 +8,7 @@ const PractitionerRouter = () => {
     <Routes>
       <Route path="/" element={<PractitionerList />} />
       <Route path="/:id" element={<PractitionerDetail />} />
-      <Route path="/edit" element={<PractitionerDetailForm />} />
+      <Route path="/:id/edit" element={<PractitionerDetailForm />} />
       <Route path="/new" element={<PractitionerDetailForm />} />
     </Routes>
   );

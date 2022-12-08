@@ -13,3 +13,22 @@ export const isEmpty = (
     (typeof value === "string" && value.trim().length === 0)
   );
 };
+
+export const interpolate = (str: string, params: object = {}): string => {
+  if (!params) {
+    return str;
+  }
+
+  let formattedString = str;
+
+  for (const [key, value] of Object.entries(params)) {
+    const val = value || "";
+
+    formattedString = formattedString.replace(
+      new RegExp(`:${key}`, "gi"),
+      val.toString()
+    );
+  }
+
+  return formattedString;
+};

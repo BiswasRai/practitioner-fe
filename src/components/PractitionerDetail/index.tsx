@@ -1,12 +1,23 @@
 import React from "react";
 import { Avatar, Card, Col, Row, Tag, Typography } from "antd";
 
-import { AntDesignOutlined } from "@ant-design/icons";
+import { AntDesignOutlined, EditOutlined } from "@ant-design/icons";
 import Dashboard from "../Dashboard";
+import { Link, useParams } from "react-router-dom";
+import { useAppSelector } from "../../hooks/reduxHooks";
+import { Practitioner } from "../../constants/globalType";
 
 const { Title } = Typography;
 
 const PractitionerDetail: React.FC = () => {
+  const { id } = useParams();
+  const practitioners = useAppSelector(
+    (store) => store.practitioner.practitioners
+  );
+  const practitioner: Practitioner = practitioners.find(
+    (item: any) => item.id === parseInt(id ?? "")
+  );
+
   return (
     <Dashboard>
       <Row>
@@ -15,6 +26,7 @@ const PractitionerDetail: React.FC = () => {
             <Avatar
               className="practitioner-avatar"
               size={{ xxl: 130 }}
+              src={practitioner.photo}
               icon={<AntDesignOutlined />}
             />
           </Col>
@@ -22,16 +34,26 @@ const PractitionerDetail: React.FC = () => {
           <Col>
             <Row align="middle">
               <Title level={2} style={{ color: "#fff" }}>
-                Biswas Rai
+                {practitioner.fullName}
               </Title>
 
-              <Tag color="green" style={{ marginLeft: "24px" }}>
-                specialist
-              </Tag>
+              {practitioner.isSpecialist ? (
+                <Tag color="green" style={{ marginLeft: "24px" }}>
+                  specialist
+                </Tag>
+              ) : (
+                ""
+              )}
             </Row>
             <Title level={5} style={{ margin: 0, color: "#fff" }}>
               Practitioner
             </Title>
+          </Col>
+
+          <Col span={3}>
+            <Link style={{ color: "white" }} to="./edit">
+              <EditOutlined />
+            </Link>
           </Col>
         </div>
       </Row>
@@ -51,7 +73,7 @@ const PractitionerDetail: React.FC = () => {
                 </Title>
               </Col>
               <Col>
-                <p>biswas.rai10@gmail.com</p>
+                <p>{practitioner.email}</p>
               </Col>
             </Row>
 
@@ -64,7 +86,7 @@ const PractitionerDetail: React.FC = () => {
                   Contact
                 </Title>
               </Col>
-              <p>9810023134</p>
+              <p>{practitioner.contact}</p>
             </Row>
 
             <Row className="practitioner-detail__list" align="middle">
@@ -76,7 +98,7 @@ const PractitionerDetail: React.FC = () => {
                   Date of Birth
                 </Title>
               </Col>
-              <p>2022/10/10</p>
+              <p>{practitioner.dateOfBirth}</p>
             </Row>
 
             <Row className="practitioner-detail__list" align="middle">
@@ -88,7 +110,7 @@ const PractitionerDetail: React.FC = () => {
                   Working Days
                 </Title>
               </Col>
-              <p>10 Days</p>
+              <p>{practitioner.workingDays} Days</p>
             </Row>
 
             <Row className="practitioner-detail__list" align="middle">
@@ -100,7 +122,7 @@ const PractitionerDetail: React.FC = () => {
                   Start Time
                 </Title>
               </Col>
-              <p>2022/10/10</p>
+              <p>{practitioner.startTime}</p>
             </Row>
 
             <Row className="practitioner-detail__list" align="middle">
@@ -112,7 +134,7 @@ const PractitionerDetail: React.FC = () => {
                   End Time
                 </Title>
               </Col>
-              <p>2022/10/10</p>
+              <p>{practitioner.endTime}</p>
             </Row>
 
             <Row className="practitioner-detail__list" align="middle">
@@ -124,7 +146,7 @@ const PractitionerDetail: React.FC = () => {
                   Permanent Address
                 </Title>
               </Col>
-              <p>Kathmandu, Nepal</p>
+              <p>{practitioner.permanentAddress}</p>
             </Row>
 
             <Row className="practitioner-detail__list" align="middle">
@@ -136,7 +158,7 @@ const PractitionerDetail: React.FC = () => {
                   Temporary Address
                 </Title>
               </Col>
-              <p>Kathmandu, Nepal</p>
+              <p>{practitioner.temporaryAddress}</p>
             </Row>
           </Card>
         </Col>

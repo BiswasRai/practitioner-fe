@@ -1,7 +1,7 @@
 const v1Endpoints = {
   LOGIN: "/login",
   SIGNUP: "/signup",
-  PRACTITIONER: "/practitioner",
+  PRACTITIONER: "/practitioner/:id",
 };
 
 type Endpoint = {
