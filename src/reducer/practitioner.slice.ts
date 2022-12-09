@@ -1,4 +1,9 @@
-import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import {
+  createAsyncThunk,
+  createSlice,
+  isRejectedWithValue,
+  PayloadAction,
+} from "@reduxjs/toolkit";
 import {
   ApiErrorResponse,
   ApiResponse,
@@ -36,8 +41,13 @@ const initialState: practitionerState = {
 
 export const fetchPractitioners = createAsyncThunk(
   "practitioners/fetchAllPractitioners",
-  () => {
-    return fetchAllPractitioners();
+  async (_, { rejectWithValue }) => {
+    try {
+      const res = await fetchAllPractitioners();
+      return res;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
   }
 );
 

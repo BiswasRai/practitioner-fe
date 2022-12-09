@@ -3,10 +3,13 @@ import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   UserOutlined,
-  TeamOutlined,
 } from "@ant-design/icons";
-import { Layout, Menu } from "antd";
-import { NavLink } from "react-router-dom";
+import { Button, Col, Layout, Menu, Row } from "antd";
+import { NavLink, useNavigate } from "react-router-dom";
+import {
+  removeAccessToken,
+  removeRefreshToken,
+} from "../../utils/localStorage";
 
 const { Header, Sider, Content } = Layout;
 
@@ -16,6 +19,14 @@ type DashboardProps = {
 
 const Dashboard = (props: DashboardProps) => {
   const [collapsed, setCollapsed] = React.useState(false);
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    removeAccessToken();
+    removeRefreshToken();
+
+    navigate("/login");
+  };
 
   return (
     <Layout>
@@ -25,21 +36,25 @@ const Dashboard = (props: DashboardProps) => {
           <Menu.Item key={1} icon={<UserOutlined />}>
             <NavLink to="/practitioner">Practitioner</NavLink>
           </Menu.Item>
-
-          <Menu.Item key={2} icon={<TeamOutlined />}>
-            <NavLink to="/User">User</NavLink>
-          </Menu.Item>
         </Menu>
       </Sider>
       <Layout className="site-layout">
         <Header className="bg-white" style={{ padding: "0 0 0 24px" }}>
-          {React.createElement(
-            collapsed ? MenuUnfoldOutlined : MenuFoldOutlined,
-            {
-              className: "trigger",
-              onClick: () => setCollapsed(!collapsed),
-            }
-          )}
+          <Row justify="space-between">
+            <Col span={12}>
+              {React.createElement(
+                collapsed ? MenuUnfoldOutlined : MenuFoldOutlined,
+                {
+                  className: "trigger",
+                  onClick: () => setCollapsed(!collapsed),
+                }
+              )}
+            </Col>
+
+            <Col span={2} offset={10}>
+              <Button onClick={() => handleLogout()}>Logout</Button>
+            </Col>
+          </Row>
         </Header>
         <Content
           className="site-layout-background"

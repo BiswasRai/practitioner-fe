@@ -10,13 +10,23 @@ import {
   ApiResponse,
   Userlogin,
 } from "../../constants/globalType";
-import { setAccessToken, setRefreshToken } from "../../utils/localStorage";
+import {
+  getAccessToken,
+  setAccessToken,
+  setRefreshToken,
+} from "../../utils/localStorage";
 
 const { Title } = Typography;
 
 const Login: React.FC = () => {
   const [api, contextHolder] = notification.useNotification();
   const navigate = useNavigate();
+
+  React.useEffect(() => {
+    if (getAccessToken()) {
+      navigate("/practitioner");
+    }
+  }, []);
 
   const onFinish = async (values: Userlogin) => {
     let res: ApiResponse;

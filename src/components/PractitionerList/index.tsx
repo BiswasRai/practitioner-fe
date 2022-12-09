@@ -14,6 +14,7 @@ import {
   Col,
   Row,
   notification,
+  Popconfirm,
 } from "antd";
 import { EyeOutlined, PlusOutlined, DeleteOutlined } from "@ant-design/icons";
 
@@ -23,7 +24,6 @@ import {
   ApiResponse,
   Practitioner,
 } from "../../constants/globalType";
-import moment from "moment";
 
 const { Title } = Typography;
 
@@ -35,8 +35,21 @@ const PractitionerList = () => {
   const dispatch = useAppDispatch();
 
   React.useEffect(() => {
-    dispatch(fetchPractitioners());
+    handleFetchPractitioners();
   }, []);
+
+  const handleFetchPractitioners = async () => {
+    try {
+      await dispatch(fetchPractitioners());
+    } catch (error) {
+      const err = error as ApiErrorResponse;
+
+      api["error"]({
+        message: err.message || "Something went wrong",
+        description: `${err.data.info}` || "",
+      });
+    }
+  };
 
   const handleDelete = async (id: number) => {
     let response: ApiResponse;
@@ -117,13 +130,14 @@ const PractitionerList = () => {
       key: "Delete",
       render: (value: Practitioner) => {
         return (
-          <Button
-            type="ghost"
-            onClick={() => handleDelete(value.id!)}
-            icon={<DeleteOutlined />}
+          <Popconfirm
+            title="Are you sure you want to delete?"
+            onConfirm={() => handleDelete(value.id!)}
           >
-            Delete
-          </Button>
+            <Button type="ghost" icon={<DeleteOutlined />}>
+              Delete
+            </Button>
+          </Popconfirm>
         );
       },
     },
