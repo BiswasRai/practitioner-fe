@@ -11,6 +11,7 @@ import {
   TimePicker,
   Upload,
   notification,
+  UploadFile,
 } from "antd";
 import {
   UserOutlined,
@@ -30,11 +31,18 @@ import { useNavigate, useParams } from "react-router-dom";
 import { ApiErrorResponse, Practitioner } from "../../constants/globalType";
 import moment from "moment";
 import dayjs from "dayjs";
+import axios from "axios";
+import { isEmpty } from "../../utils/string";
+import { RcFile } from "antd/es/upload";
 
 const handlePractitionerForm = (
   form: any,
   onFinish: any,
   specialist: boolean,
+  onChangeImage: any,
+  handlePreview: any,
+  fileList: any,
+  handleRemove: any,
   onCheckboxChange: any
 ) => {
   return (
@@ -46,8 +54,31 @@ const handlePractitionerForm = (
     >
       <Row>
         <Col>
-          <Form.Item valuePropName="fileList">
-            <Upload action="/upload.do" listType="picture-card">
+          <Form.Item
+            name="photo"
+            getValueFromEvent={(e) => {
+              if (Array.isArray(e)) {
+                return e;
+              }
+              return e && e.fileList;
+            }}
+            rules={[
+              {
+                required: true,
+                message: "Please upload a image",
+              },
+            ]}
+          >
+            <Upload
+              name="photo"
+              fileList={fileList}
+              listType="picture-card"
+              maxCount={1}
+              beforeUpload={() => false}
+              onPreview={handlePreview}
+              onRemove={handleRemove}
+              onChange={(file: any) => onChangeImage(file)}
+            >
               <div>
                 <PlusOutlined />
                 <div style={{ marginTop: 8 }}>Upload</div>
@@ -90,7 +121,6 @@ const handlePractitionerForm = (
           </Form.Item>
         </Col>
       </Row>
-
       <Row
         style={{ width: "100%" }}
         gutter={[16, 16]}
@@ -122,7 +152,6 @@ const handlePractitionerForm = (
           </Form.Item>
         </Col>
       </Row>
-
       <Row
         style={{ width: "100%" }}
         gutter={[16, 16]}
@@ -162,7 +191,6 @@ const handlePractitionerForm = (
           </Form.Item>
         </Col>
       </Row>
-
       <Row
         style={{ width: "100%" }}
         gutter={[16, 16]}
@@ -212,7 +240,6 @@ const handlePractitionerForm = (
           </Checkbox>
         </Form.Item>
       </Row>
-
       <Row>
         <Col span={3}>
           <Button type="primary" htmlType="submit">
@@ -226,6 +253,15 @@ const handlePractitionerForm = (
 
 const PractitionerDetailForm = () => {
   const dispatch = useAppDispatch();
+  const [image, setImage] = React.useState("");
+  const [fileList, setFileList] = React.useState<UploadFile[]>([
+    {
+      uid: "",
+      name: "",
+      status: "done",
+      url: "",
+    },
+  ]);
   const [specialist, setSpecialist] = React.useState(false);
   const [api, contextHolder] = notification.useNotification();
   const [edit, setEdit] = React.useState(false);
@@ -252,13 +288,19 @@ const PractitionerDetailForm = () => {
         temporaryAddress: existingData.temporaryAddress,
         permanentAddress: existingData.permanentAddress,
         dateOfBirth: moment(existingData.dateOfBirth, "YYYY-MM-DD"),
-        photo: existingData.photo,
+        photo: isEmpty(image) ? existingData.photo : image,
         startTimeAndEndTime: [
           dayjs(existingData.startTime, "HH:mm:ss"),
           dayjs(existingData.endTime, "HH:mm:ss"),
         ],
         workingDays: existingData.workingDays,
       });
+
+      setFileList([
+        { uid: "-1", name: "", status: "done", url: existingData.photo },
+      ]);
+
+      setSpecialist(existingData.isSpecialist);
 
       setEdit(!edit);
     }
@@ -271,11 +313,9 @@ const PractitionerDetailForm = () => {
   const onFinish = async (values: any) => {
     const rangeValue = values["startTimeAndEndTime"];
     const { startTimeAndEndTime, ...fieldValues } = values;
-
     const payload = {
       ...fieldValues,
-      photo:
-        "https://lh3.googleusercontent.com/a/AEdFTp5T6eiTQKPZuojbcv18dNujJyHA0mBkCit-UHsw=s96-c",
+      photo: image,
       isSpecialist: specialist,
       endTime: rangeValue[1].format("HH:mm:ss"),
       startTime: rangeValue[0].format("HH:mm:ss"),
@@ -306,6 +346,51 @@ const PractitionerDetailForm = () => {
     navigate("/practitioner");
   };
 
+  const handleOnChangeImage = (file: any) => {
+    let reader = new FormData();
+    reader.append("file", file.fileList[0].originFileObj);
+    reader.append("data", file.fileList[0].originFileObj);
+
+    axios
+      .post("http://localhost:8080/api/v1/image", reader)
+      .then((res) => {
+        console.log(res.data.data.imageURL);
+        setImage(res.data.data.imageURL);
+        setFileList([
+          {
+            uid: "",
+            name: "",
+            status: "done",
+            url: res.data.data.imageURL,
+          },
+        ]);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const handlePreview = async (file: UploadFile) => {
+    let src = file.url as string;
+
+    if (!src) {
+      src = await new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file.originFileObj as RcFile);
+        reader.onload = () => resolve(reader.result as string);
+      });
+    }
+
+    const image = new Image();
+    image.src = src;
+    const imgWindow = window.open(src);
+    imgWindow?.document.write(image.outerHTML);
+  };
+
+  const onRemove = (file: UploadFile) => {
+    setFileList(fileList.filter((item) => item.status === "removed"));
+  };
+
   return (
     <Dashboard>
       {contextHolder}
@@ -318,6 +403,10 @@ const PractitionerDetailForm = () => {
               form,
               onFinish,
               specialist,
+              handleOnChangeImage,
+              handlePreview,
+              fileList,
+              onRemove,
               onCheckboxChange
             )}
       </Card>

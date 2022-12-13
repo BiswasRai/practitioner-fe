@@ -1,6 +1,7 @@
 const v1Endpoints = {
   LOGIN: "/login",
   SIGNUP: "/signup",
+  IMAGE_UPLOAD: "/image",
   PRACTITIONER: "/practitioner/:id",
 };
 

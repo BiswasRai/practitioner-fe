@@ -1,6 +1,7 @@
 {
   "name": "practitioner-fe",
   "version": "0.1.0",
+  "type": "module",
   "private": true,
   "dependencies": {
     "@craco/craco": "^7.0.0",
@@ -12,8 +13,9 @@
     "@types/node": "^16.18.3",
     "@types/react": "^18.0.25",
     "@types/react-dom": "^18.0.9",
-    "antd": "^5.0.2",
+    "antd": "^5.0.5",
     "axios": "^1.2.0",
+    "babel-jest": "^29.3.1",
     "craco-less": "^2.0.0",
     "dayjs": "^1.11.7",
     "moment": "^2.29.4",
@@ -22,13 +24,14 @@
     "react-redux": "^8.0.5",
     "react-router-dom": "^6.4.3",
     "react-scripts": "5.0.1",
+    "redux-persist": "^6.0.0",
     "typescript": "^4.9.3",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "react-scripts test --transformIgnorePatterns \"node_modules/(?!@codemirror)/\"",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
