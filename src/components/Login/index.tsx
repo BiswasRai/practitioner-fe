@@ -65,6 +65,7 @@ const Login: React.FC = () => {
         name="normal_login"
         className="login-page__form"
         onFinish={onFinish}
+        layout={"vertical"}
       >
         <Title level={2} style={{ marginBottom: "50px" }}>
           Login
@@ -72,7 +73,19 @@ const Login: React.FC = () => {
         <Form.Item
           className="form-input"
           name="email"
-          rules={[{ required: true, message: "Please input your Email!" }]}
+          label="Email"
+          rules={[
+            {
+              required: true,
+              message: "Please input your Email!",
+            },
+            {
+              type: "email",
+              message: "Enter valid email",
+            },
+          ]}
+          normalize={(value, prevVal, prevVals) => value.trim()}
+          hasFeedback={true}
         >
           <Input
             prefix={<MailOutlined className="site-form-item-icon" />}
@@ -82,7 +95,9 @@ const Login: React.FC = () => {
         <Form.Item
           className="form-input"
           name="password"
+          label="Password"
           rules={[{ required: true, message: "Please input your Password!" }]}
+          hasFeedback={true}
         >
           <Input
             prefix={<LockOutlined className="site-form-item-icon" />}

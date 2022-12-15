@@ -66,6 +66,7 @@ const SignUp: React.FC = () => {
         name="normal_login"
         className="signup-page__form"
         onFinish={onFinish}
+        layout={"vertical"}
       >
         <Title level={2} style={{ marginBottom: "50px" }}>
           Sign Up
@@ -73,7 +74,10 @@ const SignUp: React.FC = () => {
         <Form.Item
           className="form-input"
           name="firstName"
+          label="First Name"
           rules={[{ required: true, message: "Please input your First Name!" }]}
+          normalize={(value, prevVal, prevVals) => value.trim()}
+          hasFeedback={true}
         >
           <Input
             prefix={<UserOutlined className="site-form-item-icon" />}
@@ -82,8 +86,11 @@ const SignUp: React.FC = () => {
         </Form.Item>
         <Form.Item
           className="form-input"
+          label="Last Name"
           name="lastName"
           rules={[{ required: true, message: "Please input your Last Name!" }]}
+          normalize={(value, prevVal, prevVals) => value.trim()}
+          hasFeedback={true}
         >
           <Input
             prefix={<UserOutlined className="site-form-item-icon" />}
@@ -93,7 +100,19 @@ const SignUp: React.FC = () => {
         <Form.Item
           className="form-input"
           name="email"
-          rules={[{ required: true, message: "Please input your Email!" }]}
+          label="Email"
+          rules={[
+            {
+              required: true,
+              message: "Please input your Email!",
+            },
+            {
+              type: "email",
+              message: "Enter valid email",
+            },
+          ]}
+          normalize={(value, prevVal, prevVals) => value.trim()}
+          hasFeedback={true}
         >
           <Input
             prefix={<MailOutlined className="site-form-item-icon" />}
@@ -103,7 +122,9 @@ const SignUp: React.FC = () => {
         <Form.Item
           className="form-input"
           name="password"
+          label="Password"
           rules={[{ required: true, message: "Please input your Password!" }]}
+          hasFeedback={true}
         >
           <Input
             prefix={<LockOutlined className="site-form-item-icon" />}

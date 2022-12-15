@@ -43,7 +43,7 @@ const Dashboard = (props: DashboardProps) => {
           <Row justify="space-between">
             <Col span={12}>
               {React.createElement(
-                collapsed ? LeftCircleOutlined : RightCircleOutlined,
+                collapsed ? RightCircleOutlined : LeftCircleOutlined,
                 {
                   className: "trigger",
                   onClick: () => setCollapsed(!collapsed),
