@@ -1,7 +1,7 @@
 import React from "react";
 import {
-  MenuFoldOutlined,
-  MenuUnfoldOutlined,
+  LeftCircleOutlined,
+  RightCircleOutlined,
   UserOutlined,
 } from "@ant-design/icons";
 import { Button, Col, Layout, Menu, Row } from "antd";
@@ -43,7 +43,7 @@ const Dashboard = (props: DashboardProps) => {
           <Row justify="space-between">
             <Col span={12}>
               {React.createElement(
-                collapsed ? MenuUnfoldOutlined : MenuFoldOutlined,
+                collapsed ? LeftCircleOutlined : RightCircleOutlined,
                 {
                   className: "trigger",
                   onClick: () => setCollapsed(!collapsed),

@@ -15,9 +15,3 @@ export const signupUser = (payload: Signup) => {
 
   return http.post(url, payload);
 };
-
-export const practitioner = () => {
-  const url = endpoints.PRACTITIONER;
-
-  return http.get(url);
-};

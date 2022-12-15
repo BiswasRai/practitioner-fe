@@ -37,11 +37,7 @@ http.interceptors.request.use(
   (requestConfig: AxiosRequestConfig): AxiosRequestConfig | any => {
     const accessToken = getAccessToken();
 
-    // if (accessToken) {
     return configWithAccessToken(requestConfig, accessToken);
-    // }
-
-    // return configWithAccessToken(req);
   },
   (requestError) => {
     throw requestError;

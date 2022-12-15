@@ -66,7 +66,7 @@ const PractitionerList = () => {
       return;
     }
     api["success"]({
-      message: response.message || "Something went wrong",
+      message: response.message || "Something completed",
       description: `${response.message}` || "",
     });
   };
@@ -83,13 +83,8 @@ const PractitionerList = () => {
       dataIndex: "photo",
       key: "photo",
       width: "100px",
-      render: (value: Practitioner) => {
-        return (
-          <Avatar
-            src={value?.photo ?? ""}
-            style={{ backgroundColor: "#fde3cf" }}
-          />
-        );
+      render: (value: any) => {
+        return <Avatar src={value} />;
       },
     },
     {
@@ -103,6 +98,11 @@ const PractitionerList = () => {
       key: "permanentAddress",
     },
     {
+      title: "Temporary Address",
+      dataIndex: "temporaryAddress",
+      key: "temporaryAddress",
+    },
+    {
       title: "Contact No.",
       dataIndex: "contact",
       key: "contact",
@@ -113,31 +113,32 @@ const PractitionerList = () => {
       key: "email",
     },
     {
-      title: "Details",
+      title: "",
       key: "Details",
+      width: "300px",
       render: (value: Practitioner) => {
         return (
-          <Link to={`../${value.id}`}>
-            <Button type="primary" icon={<EyeOutlined />}>
-              View Details
-            </Button>
-          </Link>
-        );
-      },
-    },
-    {
-      title: "Delete",
-      key: "Delete",
-      render: (value: Practitioner) => {
-        return (
-          <Popconfirm
-            title="Are you sure you want to delete?"
-            onConfirm={() => handleDelete(value.id!)}
-          >
-            <Button type="ghost" icon={<DeleteOutlined />}>
-              Delete
-            </Button>
-          </Popconfirm>
+          <>
+            <Link to={`../${value.id}`}>
+              <Button type="primary" icon={<EyeOutlined />}>
+                View Details
+              </Button>
+            </Link>
+
+            <Popconfirm
+              title="Are you sure you want to delete?"
+              onConfirm={() => handleDelete(value.id!)}
+            >
+              <Button
+                style={{ marginLeft: "20px" }}
+                type="primary"
+                icon={<DeleteOutlined />}
+                danger
+              >
+                Delete
+              </Button>
+            </Popconfirm>
+          </>
         );
       },
     },

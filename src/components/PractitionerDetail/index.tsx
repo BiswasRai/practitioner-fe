@@ -6,6 +6,7 @@ import Dashboard from "../Dashboard";
 import { Link, useParams } from "react-router-dom";
 import { useAppSelector } from "../../hooks/reduxHooks";
 import { Practitioner } from "../../constants/globalType";
+import moment from "moment";
 
 const { Title } = Typography;
 
@@ -17,6 +18,10 @@ const PractitionerDetail: React.FC = () => {
   const practitioner: Practitioner = practitioners.find(
     (item: any) => item.id === parseInt(id ?? "")
   );
+
+  const showDateOfBirth = (date: Date) => {
+    return moment(date);
+  };
 
   return (
     <Dashboard>

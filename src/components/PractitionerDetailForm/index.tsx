@@ -37,6 +37,7 @@ import { RcFile } from "antd/es/upload";
 
 const handlePractitionerForm = (
   form: any,
+  edit: boolean,
   onFinish: any,
   specialist: boolean,
   onChangeImage: any,
@@ -45,6 +46,7 @@ const handlePractitionerForm = (
   handleRemove: any,
   onCheckboxChange: any
 ) => {
+  console.log(fileList);
   return (
     <Form
       form={form}
@@ -243,7 +245,7 @@ const handlePractitionerForm = (
       <Row>
         <Col span={3}>
           <Button type="primary" htmlType="submit">
-            Add Practitioner
+            {edit ? "Edit" : "Add"} Practitioner
           </Button>
         </Col>
       </Row>
@@ -251,16 +253,18 @@ const handlePractitionerForm = (
   );
 };
 
+type FileList = {
+  uid: string;
+  name: string;
+  status: string;
+  url: string;
+};
+
 const PractitionerDetailForm = () => {
   const dispatch = useAppDispatch();
   const [image, setImage] = React.useState("");
-  const [fileList, setFileList] = React.useState<UploadFile[]>([
-    {
-      uid: "",
-      name: "",
-      status: "done",
-      url: "",
-    },
+  const [fileList, setFileList] = React.useState<Array<FileList>>([
+    { uid: "", name: "", status: "", url: "" },
   ]);
   const [specialist, setSpecialist] = React.useState(false);
   const [api, contextHolder] = notification.useNotification();
@@ -279,6 +283,7 @@ const PractitionerDetailForm = () => {
   }, []);
 
   const handleEdit = () => {
+    console.log(fileList[0].url, "ima");
     if (id) {
       form.setFieldsValue({
         fullName: existingData.fullName,
@@ -301,7 +306,6 @@ const PractitionerDetailForm = () => {
       ]);
 
       setSpecialist(existingData.isSpecialist);
-
       setEdit(!edit);
     }
   };
@@ -315,16 +319,17 @@ const PractitionerDetailForm = () => {
     const { startTimeAndEndTime, ...fieldValues } = values;
     const payload = {
       ...fieldValues,
-      photo: image,
       isSpecialist: specialist,
+      photo: image,
       endTime: rangeValue[1].format("HH:mm:ss"),
       startTime: rangeValue[0].format("HH:mm:ss"),
       dateOfBirth: fieldValues["dateOfBirth"].format("YYYY-MM-DD"),
     };
 
+    let res: any;
     try {
       if (edit) {
-        await dispatch(
+        res = await dispatch(
           editPractitioner({
             id,
             ...payload,
@@ -332,6 +337,8 @@ const PractitionerDetailForm = () => {
         ).unwrap();
       } else {
         await dispatch(createPractitioner(payload)).unwrap();
+
+        navigate("/practitioner");
       }
     } catch (error) {
       const err = error as ApiErrorResponse;
@@ -343,7 +350,11 @@ const PractitionerDetailForm = () => {
 
       return;
     }
-    navigate("/practitioner");
+
+    api["success"]({
+      message: res.message || "Successfully completed",
+      description: `${res.message}`,
+    });
   };
 
   const handleOnChangeImage = (file: any) => {
@@ -354,7 +365,6 @@ const PractitionerDetailForm = () => {
     axios
       .post("http://localhost:8080/api/v1/image", reader)
       .then((res) => {
-        console.log(res.data.data.imageURL);
         setImage(res.data.data.imageURL);
         setFileList([
           {
@@ -401,6 +411,7 @@ const PractitionerDetailForm = () => {
           ? ""
           : handlePractitionerForm(
               form,
+              edit,
               onFinish,
               specialist,
               handleOnChangeImage,

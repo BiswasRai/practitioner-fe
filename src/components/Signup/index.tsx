@@ -10,13 +10,23 @@ import {
   ApiResponse,
   Signup,
 } from "../../constants/globalType";
-import { setAccessToken, setRefreshToken } from "../../utils/localStorage";
+import {
+  getAccessToken,
+  setAccessToken,
+  setRefreshToken,
+} from "../../utils/localStorage";
 
 const { Title } = Typography;
 
 const SignUp: React.FC = () => {
   const [api, contextHolder] = notification.useNotification();
   const navigate = useNavigate();
+
+  React.useEffect(() => {
+    if (getAccessToken()) {
+      navigate("/practitioner");
+    }
+  }, []);
 
   const onFinish = async (values: Signup) => {
     let res: ApiResponse;
@@ -36,6 +46,8 @@ const SignUp: React.FC = () => {
 
     setAccessToken(res.data.accessToken);
     setRefreshToken(res.data.refreshToken);
+
+    console.log(getAccessToken());
     handleRedirectUser();
 
     api["success"]({
