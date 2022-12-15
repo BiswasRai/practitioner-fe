@@ -5,6 +5,7 @@ import { Button, Form, Input, notification, Row, Typography } from "antd";
 import { LockOutlined, MailOutlined } from "@ant-design/icons";
 
 import { loginUser } from "../../services/login.service";
+
 import {
   ApiErrorResponse,
   ApiResponse,
@@ -20,6 +21,7 @@ const { Title } = Typography;
 
 const Login: React.FC = () => {
   const [api, contextHolder] = notification.useNotification();
+  const [loading, setLoading] = React.useState(false);
   const navigate = useNavigate();
 
   React.useEffect(() => {
@@ -31,6 +33,7 @@ const Login: React.FC = () => {
   const onFinish = async (values: Userlogin) => {
     let res: ApiResponse;
 
+    setLoading(true);
     try {
       res = await loginUser(values);
     } catch (error) {
@@ -41,7 +44,11 @@ const Login: React.FC = () => {
         description: `${err.data.info}`,
       });
 
+      setLoading(false);
+
       return;
+    } finally {
+      setLoading(false);
     }
 
     setAccessToken(res.data.accessToken);
@@ -84,7 +91,7 @@ const Login: React.FC = () => {
               message: "Enter valid email",
             },
           ]}
-          normalize={(value, prevVal, prevVals) => value.trim()}
+          normalize={(value, _prevVal, _prevVals) => value.trim()}
           hasFeedback={true}
         >
           <Input
@@ -99,13 +106,14 @@ const Login: React.FC = () => {
           rules={[{ required: true, message: "Please input your Password!" }]}
           hasFeedback={true}
         >
-          <Input
+          <Input.Password
             prefix={<LockOutlined className="site-form-item-icon" />}
             type="password"
             placeholder="Password"
           />
         </Form.Item>
         <Button
+          loading={loading}
           type="primary"
           htmlType="submit"
           style={{ width: "100%", marginTop: "50px" }}

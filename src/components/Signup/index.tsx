@@ -15,10 +15,12 @@ import {
   setAccessToken,
   setRefreshToken,
 } from "../../utils/localStorage";
+import { checkIfStringContainsSpaceInStartAndEnd } from "../../utils/string";
 
 const { Title } = Typography;
 
 const SignUp: React.FC = () => {
+  const [loading, setLoading] = React.useState(false);
   const [api, contextHolder] = notification.useNotification();
   const navigate = useNavigate();
 
@@ -31,6 +33,7 @@ const SignUp: React.FC = () => {
   const onFinish = async (values: Signup) => {
     let res: ApiResponse;
 
+    setLoading(true);
     try {
       res = await signupUser(values);
     } catch (error) {
@@ -41,13 +44,16 @@ const SignUp: React.FC = () => {
         description: `${err.data.info}`,
       });
 
+      setLoading(false);
+
       return;
+    } finally {
+      setLoading(false);
     }
 
     setAccessToken(res.data.accessToken);
     setRefreshToken(res.data.refreshToken);
 
-    console.log(getAccessToken());
     handleRedirectUser();
 
     api["success"]({
@@ -75,8 +81,15 @@ const SignUp: React.FC = () => {
           className="form-input"
           name="firstName"
           label="First Name"
-          rules={[{ required: true, message: "Please input your First Name!" }]}
-          normalize={(value, prevVal, prevVals) => value.trim()}
+          rules={[
+            { required: true, message: "Please input your First Name!" },
+            {
+              validator: (_, value) =>
+                !checkIfStringContainsSpaceInStartAndEnd(value)
+                  ? Promise.resolve()
+                  : Promise.reject(new Error("Please remove extra spaces.")),
+            },
+          ]}
           hasFeedback={true}
         >
           <Input
@@ -88,8 +101,15 @@ const SignUp: React.FC = () => {
           className="form-input"
           label="Last Name"
           name="lastName"
-          rules={[{ required: true, message: "Please input your Last Name!" }]}
-          normalize={(value, prevVal, prevVals) => value.trim()}
+          rules={[
+            { required: true, message: "Please input your Last Name!" },
+            {
+              validator: (_, value) =>
+                !checkIfStringContainsSpaceInStartAndEnd(value)
+                  ? Promise.resolve()
+                  : Promise.reject(new Error("Please remove extra spaces.")),
+            },
+          ]}
           hasFeedback={true}
         >
           <Input
@@ -110,8 +130,13 @@ const SignUp: React.FC = () => {
               type: "email",
               message: "Enter valid email",
             },
+            {
+              validator: (_, value) =>
+                !checkIfStringContainsSpaceInStartAndEnd(value)
+                  ? Promise.resolve()
+                  : Promise.reject(new Error("Please remove extra spaces.")),
+            },
           ]}
-          normalize={(value, prevVal, prevVals) => value.trim()}
           hasFeedback={true}
         >
           <Input
@@ -123,10 +148,18 @@ const SignUp: React.FC = () => {
           className="form-input"
           name="password"
           label="Password"
-          rules={[{ required: true, message: "Please input your Password!" }]}
+          rules={[
+            { required: true, message: "Please input your Password!" },
+            {
+              validator: (_, value) =>
+                !checkIfStringContainsSpaceInStartAndEnd(value)
+                  ? Promise.resolve()
+                  : Promise.reject(new Error("Please remove extra spaces.")),
+            },
+          ]}
           hasFeedback={true}
         >
-          <Input
+          <Input.Password
             prefix={<LockOutlined className="site-form-item-icon" />}
             type="password"
             placeholder="Password"
@@ -134,6 +167,7 @@ const SignUp: React.FC = () => {
         </Form.Item>
         <Button
           type="primary"
+          loading={loading}
           htmlType="submit"
           style={{ width: "100%", marginTop: "50px" }}
           className="login-form-button"

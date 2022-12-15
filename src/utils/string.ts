@@ -32,3 +32,9 @@ export const interpolate = (str: string, params: object = {}): string => {
 
   return formattedString;
 };
+
+export const checkIfStringContainsSpaceInStartAndEnd = (
+  str: string
+): Boolean => {
+  return str.startsWith(" ") || str.endsWith(" ");
+};

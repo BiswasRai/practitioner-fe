@@ -32,10 +32,14 @@ import { ApiErrorResponse, Practitioner } from "../../constants/globalType";
 import moment from "moment";
 import dayjs from "dayjs";
 import axios from "axios";
-import { isEmpty } from "../../utils/string";
+import {
+  checkIfStringContainsSpaceInStartAndEnd,
+  isEmpty,
+} from "../../utils/string";
 import { RcFile } from "antd/es/upload";
 
 const handlePractitionerForm = (
+  loading: boolean,
   form: any,
   edit: boolean,
   onFinish: any,
@@ -46,7 +50,6 @@ const handlePractitionerForm = (
   handleRemove: any,
   onCheckboxChange: any
 ) => {
-  console.log(fileList);
   return (
     <Form
       form={form}
@@ -73,6 +76,7 @@ const handlePractitionerForm = (
           >
             <Upload
               name="photo"
+              accept="image/*"
               fileList={fileList}
               listType="picture-card"
               maxCount={1}
@@ -101,7 +105,14 @@ const handlePractitionerForm = (
             label="Full Name"
             rules={[
               { required: true, message: "Please input your First Name!" },
+              {
+                validator: (_, value) =>
+                  !checkIfStringContainsSpaceInStartAndEnd(value)
+                    ? Promise.resolve()
+                    : Promise.reject(new Error("Please remove extra spaces.")),
+              },
             ]}
+            hasFeedback={true}
           >
             <Input
               prefix={<UserOutlined className="site-form-item-icon" />}
@@ -114,7 +125,17 @@ const handlePractitionerForm = (
           <Form.Item
             name="email"
             label="Email"
-            rules={[{ required: true, message: "Please input your Email!" }]}
+            rules={[
+              { required: true, message: "Please input your Email!" },
+              { type: "email", message: "Please add valid Email!" },
+              {
+                validator: (_, value) =>
+                  !checkIfStringContainsSpaceInStartAndEnd(value)
+                    ? Promise.resolve()
+                    : Promise.reject(new Error("Please remove extra spaces.")),
+              },
+            ]}
+            hasFeedback={true}
           >
             <Input
               prefix={<MailOutlined className="site-form-item-icon" />}
@@ -133,7 +154,20 @@ const handlePractitionerForm = (
           <Form.Item
             name="contact"
             label="Contact No."
-            rules={[{ required: true, message: "Please input your contact!" }]}
+            rules={[
+              { required: true, message: "Please input your contact!" },
+              {
+                message: "Please enter a valid number",
+                pattern: new RegExp(/^[0-9]+$/),
+              },
+              {
+                validator: (_, value) =>
+                  !checkIfStringContainsSpaceInStartAndEnd(value)
+                    ? Promise.resolve()
+                    : Promise.reject(new Error("Please remove extra spaces.")),
+              },
+            ]}
+            hasFeedback={true}
           >
             <Input
               prefix={<ContactsOutlined className="site-form-item-icon" />}
@@ -149,8 +183,12 @@ const handlePractitionerForm = (
             rules={[
               { required: true, message: "Please input your Date of Birth!" },
             ]}
+            hasFeedback={true}
           >
-            <DatePicker style={{ width: "100%" }} />
+            <DatePicker
+              disabledDate={(current) => current.isAfter(dayjs())}
+              style={{ width: "100%" }}
+            />
           </Form.Item>
         </Col>
       </Row>
@@ -170,6 +208,7 @@ const handlePractitionerForm = (
                 message: "Please input your start time!",
               },
             ]}
+            hasFeedback={true}
           >
             <TimePicker.RangePicker style={{ width: "100%" }} />
           </Form.Item>
@@ -184,7 +223,12 @@ const handlePractitionerForm = (
                 required: true,
                 message: "Please input your Working Days!",
               },
+              {
+                pattern: new RegExp(/^[0-9]+$/),
+                message: "Please enter a valid number",
+              },
             ]}
+            hasFeedback={true}
           >
             <Input
               prefix={<ClockCircleOutlined className="site-form-item-icon" />}
@@ -208,7 +252,14 @@ const handlePractitionerForm = (
                 required: true,
                 message: "Please input your Permanent Address!",
               },
+              {
+                validator: (_, value) =>
+                  !checkIfStringContainsSpaceInStartAndEnd(value)
+                    ? Promise.resolve()
+                    : Promise.reject(new Error("Please remove extra spaces.")),
+              },
             ]}
+            hasFeedback={true}
           >
             <Input
               prefix={<UserOutlined className="site-form-item-icon" />}
@@ -226,7 +277,14 @@ const handlePractitionerForm = (
                 required: true,
                 message: "Please input your Temporary Address!",
               },
+              {
+                validator: (_, value) =>
+                  !checkIfStringContainsSpaceInStartAndEnd(value)
+                    ? Promise.resolve()
+                    : Promise.reject(new Error("Please remove extra spaces.")),
+              },
             ]}
+            hasFeedback={true}
           >
             <Input
               prefix={<UserOutlined className="site-form-item-icon" />}
@@ -244,7 +302,7 @@ const handlePractitionerForm = (
       </Row>
       <Row>
         <Col span={3}>
-          <Button type="primary" htmlType="submit">
+          <Button type="primary" loading={loading} htmlType="submit">
             {edit ? "Edit" : "Add"} Practitioner
           </Button>
         </Col>
@@ -257,18 +315,16 @@ type FileList = {
   uid: string;
   name: string;
   status: string;
-  url: string;
+  url?: string;
 };
 
 const PractitionerDetailForm = () => {
   const dispatch = useAppDispatch();
-  const [image, setImage] = React.useState("");
-  const [fileList, setFileList] = React.useState<Array<FileList>>([
-    { uid: "", name: "", status: "", url: "" },
-  ]);
+  const [fileList, setFileList] = React.useState<Array<FileList>>([]);
   const [specialist, setSpecialist] = React.useState(false);
   const [api, contextHolder] = notification.useNotification();
   const [edit, setEdit] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
   const practitioners = useAppSelector((store) => store.practitioner);
 
   const { id } = useParams();
@@ -278,13 +334,17 @@ const PractitionerDetailForm = () => {
   const existingData: Practitioner = practitioners.practitioners.find(
     (item: any) => item.id === parseInt(id ?? "")
   );
+
   React.useEffect(() => {
     handleEdit();
   }, []);
 
   const handleEdit = () => {
-    console.log(fileList[0].url, "ima");
     if (id) {
+      setFileList([
+        { uid: "-1", name: "", status: "done", url: existingData.photo },
+      ]);
+
       form.setFieldsValue({
         fullName: existingData.fullName,
         contact: existingData.contact,
@@ -293,17 +353,13 @@ const PractitionerDetailForm = () => {
         temporaryAddress: existingData.temporaryAddress,
         permanentAddress: existingData.permanentAddress,
         dateOfBirth: moment(existingData.dateOfBirth, "YYYY-MM-DD"),
-        photo: isEmpty(image) ? existingData.photo : image,
+        photo: isEmpty(fileList) ? existingData.photo : fileList[0].url,
         startTimeAndEndTime: [
           dayjs(existingData.startTime, "HH:mm:ss"),
           dayjs(existingData.endTime, "HH:mm:ss"),
         ],
         workingDays: existingData.workingDays,
       });
-
-      setFileList([
-        { uid: "-1", name: "", status: "done", url: existingData.photo },
-      ]);
 
       setSpecialist(existingData.isSpecialist);
       setEdit(!edit);
@@ -320,13 +376,15 @@ const PractitionerDetailForm = () => {
     const payload = {
       ...fieldValues,
       isSpecialist: specialist,
-      photo: image,
+      photo: fileList[0].url,
       endTime: rangeValue[1].format("HH:mm:ss"),
       startTime: rangeValue[0].format("HH:mm:ss"),
       dateOfBirth: fieldValues["dateOfBirth"].format("YYYY-MM-DD"),
     };
 
     let res: any;
+    setLoading(true);
+
     try {
       if (edit) {
         res = await dispatch(
@@ -349,6 +407,8 @@ const PractitionerDetailForm = () => {
       });
 
       return;
+    } finally {
+      setLoading(false);
     }
 
     api["success"]({
@@ -357,27 +417,43 @@ const PractitionerDetailForm = () => {
     });
   };
 
-  const handleOnChangeImage = (file: any) => {
+  const handleOnChangeImage = async (file: any) => {
     let reader = new FormData();
     reader.append("file", file.fileList[0].originFileObj);
     reader.append("data", file.fileList[0].originFileObj);
 
-    axios
-      .post("http://localhost:8080/api/v1/image", reader)
-      .then((res) => {
-        setImage(res.data.data.imageURL);
-        setFileList([
-          {
-            uid: "",
-            name: "",
-            status: "done",
-            url: res.data.data.imageURL,
-          },
-        ]);
-      })
-      .catch((err) => {
-        console.log(err);
+    let imageRes: any;
+
+    try {
+      setLoading(true);
+      imageRes = await axios.post("http://localhost:8080/api/v1/image", reader);
+
+      setFileList([
+        {
+          uid: "",
+          name: "",
+          status: "done",
+          url: imageRes.data.data.imageURL,
+        },
+      ]);
+    } catch (error) {
+      const err = error as ApiErrorResponse;
+
+      api["error"]({
+        message: err.message || "Something went wrong",
+        description: "Unable to add image",
       });
+
+      setLoading(false);
+      return;
+    } finally {
+      setLoading(false);
+    }
+
+    api["success"]({
+      message: imageRes.message || "Successfully added image",
+      description: `${imageRes.data.message}`,
+    });
   };
 
   const handlePreview = async (file: UploadFile) => {
@@ -397,7 +473,7 @@ const PractitionerDetailForm = () => {
     imgWindow?.document.write(image.outerHTML);
   };
 
-  const onRemove = (file: UploadFile) => {
+  const onRemove = (_file: UploadFile) => {
     setFileList(fileList.filter((item) => item.status === "removed"));
   };
 
@@ -410,6 +486,7 @@ const PractitionerDetailForm = () => {
         {practitioners.loading
           ? ""
           : handlePractitionerForm(
+              loading,
               form,
               edit,
               onFinish,
