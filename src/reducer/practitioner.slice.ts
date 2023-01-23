@@ -107,6 +107,8 @@ const practitionerSlice = createSlice({
       fetchPractitioners.fulfilled,
       (state, action: PayloadAction<ApiResponse>) => {
         state.loading = false;
+
+        console.log(action.payload);
         state.practitioners = action.payload.data;
       }
     );

@@ -41,7 +41,7 @@ const Login: React.FC = () => {
 
       api["error"]({
         message: err.message || "Something went wrong",
-        description: `${err.data.info}`,
+        description: `${err.data?.info}` || "",
       });
 
       setLoading(false);
@@ -74,7 +74,7 @@ const Login: React.FC = () => {
         onFinish={onFinish}
         layout={"vertical"}
       >
-        <Title level={2} style={{ marginBottom: "50px" }}>
+        <Title className="heading" level={2} style={{ marginBottom: "50px" }}>
           Login
         </Title>
         <Form.Item

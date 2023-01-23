@@ -12,6 +12,7 @@ import {
   Upload,
   notification,
   UploadFile,
+  Typography,
 } from "antd";
 import {
   UserOutlined,
@@ -39,6 +40,7 @@ import {
 import { RcFile } from "antd/es/upload";
 
 const handlePractitionerForm = (
+  imageAdding: boolean,
   loading: boolean,
   form: any,
   edit: boolean,
@@ -302,7 +304,12 @@ const handlePractitionerForm = (
       </Row>
       <Row>
         <Col span={3}>
-          <Button type="primary" loading={loading} htmlType="submit">
+          <Button
+            type="primary"
+            loading={loading}
+            disabled={imageAdding}
+            htmlType="submit"
+          >
             {edit ? "Edit" : "Add"} Practitioner
           </Button>
         </Col>
@@ -320,11 +327,15 @@ type FileList = {
 
 const PractitionerDetailForm = () => {
   const dispatch = useAppDispatch();
-  const [fileList, setFileList] = React.useState<Array<FileList>>([]);
-  const [specialist, setSpecialist] = React.useState(false);
-  const [api, contextHolder] = notification.useNotification();
+
   const [edit, setEdit] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
+  const [specialist, setSpecialist] = React.useState(false);
+  const [imageAdding, setImageAdding] = React.useState(false);
+  const [fileList, setFileList] = React.useState<Array<FileList>>([]);
+
+  const [api, contextHolder] = notification.useNotification();
+
   const practitioners = useAppSelector((store) => store.practitioner);
 
   const { id } = useParams();
@@ -334,6 +345,8 @@ const PractitionerDetailForm = () => {
   const existingData: Practitioner = practitioners.practitioners.find(
     (item: any) => item.id === parseInt(id ?? "")
   );
+
+  const { Title } = Typography;
 
   React.useEffect(() => {
     handleEdit();
@@ -425,7 +438,7 @@ const PractitionerDetailForm = () => {
     let imageRes: any;
 
     try {
-      setLoading(true);
+      setImageAdding(true);
       imageRes = await axios.post("http://localhost:8080/api/v1/image", reader);
 
       setFileList([
@@ -444,10 +457,10 @@ const PractitionerDetailForm = () => {
         description: "Unable to add image",
       });
 
-      setLoading(false);
+      setImageAdding(false);
       return;
     } finally {
-      setLoading(false);
+      setImageAdding(false);
     }
 
     api["success"]({
@@ -481,11 +494,12 @@ const PractitionerDetailForm = () => {
     <Dashboard>
       {contextHolder}
 
-      <p>Practitioner</p>
+      <Title level={4}>Practitioner Detail Page</Title>
       <Card>
         {practitioners.loading
           ? ""
           : handlePractitionerForm(
+              imageAdding,
               loading,
               form,
               edit,

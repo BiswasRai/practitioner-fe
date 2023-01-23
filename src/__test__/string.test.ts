@@ -1,4 +1,8 @@
-import { interpolate, isEmpty } from "../utils/string";
+import {
+  checkIfStringContainsSpaceInStartAndEnd,
+  interpolate,
+  isEmpty,
+} from "../utils/string";
 
 jest.mock("react", () => ({
   html: jest.fn(),
@@ -74,5 +78,26 @@ describe("isEmpty", function () {
     expect(isEmpty(1)).toBe(false);
     expect(isEmpty("abc")).toBe(false);
     expect(isEmpty({ a: "abc" })).toBe(false);
+  });
+});
+
+describe("checkIfStringContainsSpaceInStartAndEnd", function () {
+  test("should return `true` when the string contains space before and after word", () => {
+    // Arrange
+    const inputWithoutSpace = "abc def";
+    const inputWithSpace = " abc def";
+    const inputString = "abc def ";
+
+    // Act
+    const outputWithSpace =
+      checkIfStringContainsSpaceInStartAndEnd(inputWithSpace);
+    const outputWithoutSpace =
+      checkIfStringContainsSpaceInStartAndEnd(inputWithoutSpace);
+    const outputString = checkIfStringContainsSpaceInStartAndEnd(inputString);
+
+    // Assert
+    expect(outputWithSpace).toBe(true);
+    expect(outputWithoutSpace).toBe(false);
+    expect(outputString).toBe(true);
   });
 });

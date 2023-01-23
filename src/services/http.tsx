@@ -58,6 +58,8 @@ http.interceptors.response.use(
       throw new Error(error);
     }
 
+    console.log(error);
+
     const { data } = error?.response;
 
     throw data;
